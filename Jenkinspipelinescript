@@ -1,0 +1,54 @@
+pipeline {
+    agent any
+    stages {
+        stage('Git-Checkout') {
+            steps { 
+                echo 'Checking out the Git repository !'
+				git credentialsId: '505df32d-6be9-4ce6-aa22-22251aca48a0', url: 'https://github.com/selvakumar3042/Pipeline_repo.git'
+                 }
+			}
+		stage('Build') {
+            steps { 
+                echo 'Building the check-out project!'
+				sh label: '', script: 'sh Build.sh'
+                  }
+			}
+		stage('Unit-Test') {
+            steps { 
+                echo 'Running Unit test!'
+				sh label: '', script: 'sh Unit.sh'
+                  }
+			}
+		stage('Quality-Gate') {
+            steps { 
+                echo 'Verifying Quality Gate!'
+				sh label: '', script: 'sh Quality.sh'
+                  }
+			}
+		stage('Deploy') {
+            steps { 
+                echo 'Deploying the build!!'
+				sh label: '', script: 'sh Deploy.sh'
+                  }
+			}
+        }
+		
+	post { 
+        always { 
+            echo 'I will run always say Hello again!'
+        }
+		failure{ 
+            echo 'I will run  in case of Failure!'
+        }
+		success{ 
+            echo 'I will run in case of job success!'
+        }
+		changed{ 	
+            echo 'I will run in case of any change in pipeline !'
+			echo 'Eg: in case first build is failure and now it is success then i will run !'
+        }
+		unsuccessful{ 
+            echo 'I will run when the build is unsuccessful'
+        }
+    }
+}
